@@ -11,28 +11,27 @@ import { connect } from "react-redux";
 
 class TaskPreview extends Component {
   state = {
-    description: "",
+    description: this.props.task.description,
+    importance: this.props.task.importance,
+    title: this.props.task.title,
+    isEdit: false,
   };
 
-  constructor(props) {
-    super(props);
-    this.descriptionInput = React.createRef();
-  }
-
-  handleChange = (ev, field) => {
-    this.setState({ [field]: ev.target.innerText });
+  handleChange = (ev) => {
+    let { name, value } = ev.target;
+    value = ev.target.type === "number" ? parseInt(value) : value;
+    this.setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  onUpdateContent = (field, refInput) => {
+  onUpdateContent = (field) => {
     this.props.updateTask(this.props.task, this.state[field], field);
-    refInput.current.contentEditable = false;
   };
 
-  toggleEdit = (refInput) => {
-    refInput.current.contentEditable = true;
-    refInput.current.focus();
-  };
-
+  toggleEdit() {
+    this.setState(({ isEdit }) => ({
+      isEdit: !isEdit,
+    }));
+  }
   render() {
     const {
       _id,
@@ -40,7 +39,6 @@ class TaskPreview extends Component {
       description,
       importance,
       createdAt,
-      lastTriedAt,
       triesCount,
       doneAt,
     } = this.props.task;
@@ -49,7 +47,27 @@ class TaskPreview extends Component {
       <div className="task-preview flex space-between">
         <div className="task-details flex column">
           <div className="task-details-item flex align-center">
-            <h3>{title}</h3>
+            {this.state.isEdit ? (
+              <>
+                <h3>
+                  <span>Task name: </span>
+                </h3>
+                <input
+                  onBlur={() => this.onUpdateContent("title")}
+                  type="text"
+                  name="title"
+                  onInput={(ev) => this.handleChange(ev, "title")}
+                  onChange={(ev) => this.handleChange(ev, "title")}
+                  value={this.state.title}
+                  placeholder="Empty"
+                ></input>
+              </>
+            ) : (
+              <h3>
+                <span>Task name: </span>
+                {title}
+              </h3>
+            )}
           </div>
           <div className="task-details-item flex align-center">
             <img
@@ -58,19 +76,20 @@ class TaskPreview extends Component {
               src={pen}
               alt="pen"
               title="edit"
-              onClick={() => this.toggleEdit(this.descriptionInput)}
             />
-            <h3
-              contentEditable={false}
-              ref={this.descriptionInput}
-              onFocus={() => this.setState({ description })}
-              onInput={(ev) => this.handleChange(ev, "description")}
-              onBlur={() =>
-                this.onUpdateContent("description", this.descriptionInput)
-              }
-            >
-              {description ? description : "Write a description..."}{" "}
-            </h3>
+            {this.state.isEdit ? (
+              <input
+                onBlur={() => this.onUpdateContent("description")}
+                type="text"
+                name="description"
+                onInput={(ev) => this.handleChange(ev, "description")}
+                onChange={(ev) => this.handleChange(ev, "description")}
+                value={this.state.description}
+                placeholder="Empty"
+              ></input>
+            ) : (
+              <h3>{description ? description : "Write a description..."} </h3>
+            )}
           </div>
           <div className="task-details-item flex align-center">
             <img
@@ -79,9 +98,25 @@ class TaskPreview extends Component {
               alt="Importance"
               title="edit"
             />
-
-            <h3>Importance: {importance}</h3>
+            {this.state.isEdit ? (
+              <>
+                <h3>Importance:</h3>
+                <select
+                  onBlur={() => this.onUpdateContent("importance")}
+                  name="importance"
+                  value={this.state.importance}
+                  onChange={this.handleChange}
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </>
+            ) : (
+              <h3>Importance: {importance}</h3>
+            )}
           </div>
+
           <div className="task-details-item flex align-center">
             <img
               className="img-icon"
@@ -119,12 +154,17 @@ class TaskPreview extends Component {
           </div>
         </div>
         <div className="task-actions flex column space-between">
-          <button
-            className="btn-delete"
-            onClick={() => this.props.onTaskDelete(_id)}
-          >
-            Delete
-          </button>
+          <div className="flex space-between">
+            <button className="btn-edit" onClick={() => this.toggleEdit()}>
+              {this.state.isEdit ? "Save" : "Edit"}
+            </button>
+            <button
+              className="btn-delete"
+              onClick={() => this.props.onTaskDelete(_id)}
+            >
+              Delete
+            </button>
+          </div>
           {!doneAt && (
             <button
               className="btn-start"

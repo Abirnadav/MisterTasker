@@ -17,12 +17,12 @@ class TaskAdd extends Component {
   handleSubmit = (ev) => {
     ev.preventDefault();
     const newTask = {};
-    newTask.title = this.state.title;
-    newTask.createdAt = Date.now();
+    newTask.title = this.state.title ? this.state.title : "New Task";
     newTask.triesCount = 0;
     newTask.importance = this.state.importance;
     newTask.lastTriedAt = null;
     newTask.doneAt = null;
+    newTask.createdAt = Date.now();
     this.props.saveTask(newTask);
     this.setState({ title: "", importance: 2 });
   };

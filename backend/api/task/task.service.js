@@ -25,11 +25,14 @@ function runInterval() {
             console.log('Trying task', task)
             await externalService.execute(task)
             task.doneAt = Date.now()
+            connectSockets.updateFinishedTask()
+
         } catch (error) {
             console.log(error, 'Task has failed')
         } finally {
             task.lastTriedAt = Date.now()
             task.triesCount++
+
             update(task)
         }
     }, 3000);
@@ -95,7 +98,7 @@ async function update(task) {
 
     try {
         await collection.replaceOne({ "_id": task._id }, { $set: task })
-        connectSockets.updateFinishedTask()
+
         return task
     } catch (err) {
         console.log(`ERROR: cannot update task ${task._id}`)
