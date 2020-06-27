@@ -1,0 +1,16 @@
+.App {
+  padding-bottom: 20px;
+  background-color: rgba(225, 236, 236, 0.726);
+  min-height: 100vh;
+  header {
+    display: flex;
+    align-items: center;
+    background-color: #0984e3;
+    height: 10vh;
+    padding: 0px 50px;
+  }
+  header h2 {
+    color: white;
+    font-size: 35px;
+  }
+}
