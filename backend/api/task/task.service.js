@@ -17,7 +17,7 @@ module.exports = {
 
 function runInterval() {
     setInterval(async () => {
-        const taskArr = await findTaskToExec()
+        const taskArr = await getTaskToExec()
         const task = taskArr[0]
         if (!task) return
 
@@ -25,7 +25,7 @@ function runInterval() {
             console.log('Trying task', task)
             await externalService.execute(task)
             task.doneAt = Date.now()
-            connectSockets.updateFinishedTask()
+
 
         } catch (error) {
             console.log(error, 'Task has failed')
@@ -38,7 +38,7 @@ function runInterval() {
     }, 3000);
 }
 
-async function findTaskToExec() {
+async function getTaskToExec() {
     const criteria = {}
     const sortCriteria = {}
     criteria['doneAt'] = null

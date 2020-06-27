@@ -70,13 +70,7 @@ class TaskPreview extends Component {
             )}
           </div>
           <div className="task-details-item flex align-center">
-            <img
-              style={{ cursor: "pointer" }}
-              className="img-icon"
-              src={pen}
-              alt="pen"
-              title="edit"
-            />
+            <img className="img-icon" src={pen} alt="pen" title="edit" />
             {this.state.isEdit ? (
               <input
                 onBlur={() => this.onUpdateContent("description")}

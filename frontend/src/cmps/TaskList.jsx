@@ -7,6 +7,7 @@ export default class TaskList extends React.Component {
   };
 
   getSortedTasks = () => {
+    console.log("Sorting tasks");
     const tasks = this.props.tasks;
     const { sortBy } = this.state;
     return sortByKey(tasks, sortBy);
@@ -18,7 +19,12 @@ export default class TaskList extends React.Component {
       });
     }
   };
-
+  handleChange = (ev) => {
+    let { name, value } = ev.target;
+    console.log("TaskList -> handleChange -> value", value);
+    value = ev.target.type === "number" ? parseInt(value) : value;
+    this.setState((prevState) => ({ ...prevState, [name]: value }));
+  };
   taskDoneAmount() {
     const { tasks } = this.props;
     let amount = 0;
@@ -32,6 +38,17 @@ export default class TaskList extends React.Component {
 
     return (
       <div className="task-list">
+        <div className="sort-container">
+          <select
+            name="sortBy"
+            value={this.state.sortBy}
+            onChange={this.handleChange}
+          >
+            <option value="createdAt">Date created</option>
+            <option value="doneAt">Date Finished</option>
+          </select>
+        </div>
+
         <h1>{tasks.length > 0 ? "My Tasks" : "No Tasks Found"}</h1>
         <div className="statistics">
           <span>Total Tasks: {tasks.length}</span>

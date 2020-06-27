@@ -22,6 +22,14 @@
     display: flex;
     justify-content: center;
   }
+  .sort-container select {
+    background-color: rgba(0, 0, 0, 0.082);
+    padding: 5px 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+  }
   @media only screen and (max-width: 650px) {
     .statistics {
       display: none !important;
